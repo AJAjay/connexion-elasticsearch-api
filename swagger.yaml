@@ -1,0 +1,75 @@
+swagger: '2.0'
+info:
+  title: Elasticsearch Example API
+  version: "0.1"
+  description: Simple example API to retrive data from elasticsearch
+consumes:
+  - application/json
+produces:
+  - application/json
+security:
+  # enable OAuth protection for all REST endpoints
+  # (only active if the TOKENINFO_URL environment variable is set)
+  - oauth2: [uid]
+paths:
+  /elasticsearch:
+    post:
+      tags: [test]
+      operationId: app.get_data
+      summary: query from elasticsearch without passing query
+      parameters:
+        - name: query
+          in: body
+          schema:
+            type: object
+      responses:
+        200:
+          description: got get_data
+          schema:
+            type: object        
+
+  /elasticsearch_test:
+    post:
+      tags: [test]
+      operationId: app.test_query
+      summary: query from elasticsearch passing query as object
+      parameters:
+        - name: query
+          in: body
+          description: elasticsearch query with index
+          schema:
+            $ref: '#/definitions/query'
+      responses:
+        200:
+          description: successfull
+          schema:
+            type: object  
+        400:
+          description: bad elasticsearch query
+          schema:
+            type: object        
+
+definitions:
+  query:
+    type: object
+    required:
+      - index
+      - body
+    properties:
+      index:
+        type: string
+        description: index name
+        example: "index_name"
+      body:
+        type: object
+        description: valid elasticsearch search query body
+
+
+
+securityDefinitions:
+  oauth2:
+    type: oauth2
+    flow: implicit
+    authorizationUrl: https://example.com/oauth2/dialog
+    scopes:
+      uid: Unique identifier of the user accessing the service.
